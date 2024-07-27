@@ -9,6 +9,9 @@ namespace ReviewApp_InWebApi.Helper
         public MappingProfiles()
         {
             CreateMap<Pokemon,PokemonDto>();
+            CreateMap<Category,CategoryDto>();
+            CreateMap<Country,CountryDto>();
         }
     }
 }
+  
