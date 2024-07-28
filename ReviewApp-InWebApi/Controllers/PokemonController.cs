@@ -7,6 +7,7 @@ using ReviewApp_InWebApi.Model;
 namespace ReviewApp_InWebApi.Controllers
 {
     [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
+    [ApiController]
     public class PokemonController : Controller
     {
         private readonly IPokemonRepository _pokemonRepository;
