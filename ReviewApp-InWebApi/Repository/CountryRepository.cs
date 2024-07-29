@@ -7,38 +7,50 @@ namespace ReviewApp_InWebApi.Repository
 {
     public class CountryRepository : ICountryRepository
     {
-        private readonly DataContext _Context;
+        private readonly DataContext _context;
         private readonly IMapper _mapper;
 
         public CountryRepository(DataContext Context,IMapper mapper)
 
         {
-            _Context = Context;
+            _context = Context;
             _mapper = mapper;
         }
         public bool CountryExists(int id)
         {
-            return _Context.Countries.Any(c => c.Id == id);
+            return _context.Countries.Any(c => c.Id == id);
+        }
+
+        public bool CreateCountry(Country country)
+        {
+            _context.Countries.Add(country);
+            return Save();
         }
 
         public ICollection<Country> GetCountries()
         {
-            return _Context.Countries.ToList();
+            return _context.Countries.ToList();
         }
 
         public Country GetCountry(int id)
         {
-            return _Context.Countries.Where(c=>c.Id==id).FirstOrDefault();
+            return _context.Countries.Where(c=>c.Id==id).FirstOrDefault();
         }
 
         public Country GetCountryByOwner(int ownerId)
         {
-            return _Context.Owners.Where(o => o.Id == ownerId).Select(c => c.Country).FirstOrDefault();
+            return _context.Owners.Where(o => o.Id == ownerId).Select(c => c.Country).FirstOrDefault();
         }
 
         public ICollection<Owner> GetOwnersFromCountry(int countryId)
         {
-            return _Context.Owners.Where(c => c.Id == countryId).ToList();
+            return _context.Owners.Where(c => c.Id == countryId).ToList();
+        }
+
+        public bool Save()
+        {
+            var saved=_context.SaveChanges();
+            return saved>0?true:false;
         }
     }
 }

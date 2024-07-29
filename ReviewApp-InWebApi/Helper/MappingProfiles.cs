@@ -9,10 +9,16 @@ namespace ReviewApp_InWebApi.Helper
         public MappingProfiles()
         {
             CreateMap<Pokemon,PokemonDto>();
+            CreateMap<PokemonDto,Pokemon>();
             CreateMap<Category,CategoryDto>();
+            CreateMap<CategoryDto,Category>();
             CreateMap<Country,CountryDto>();
-            CreateMap<Owner, OwnerDto>();
+            CreateMap<CountryDto, Country>();
+            CreateMap<OwnerDto, Owner>();
+            CreateMap<Owner, OwnerDto> ();
+            CreateMap<ReviewDto, Review>();
             CreateMap<Review, ReviewDto>();
+            CreateMap<ReviewerDto, Reviewer>();
             CreateMap<Reviewer, ReviewerDto>();
         }
     }

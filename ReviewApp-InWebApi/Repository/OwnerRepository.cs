@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ReviewApp_InWebApi.Data;
 using ReviewApp_InWebApi.Interfaces;
@@ -16,6 +17,13 @@ namespace ReviewApp_InWebApi.Repository
             _context = context;
             
         }
+
+        public bool CreateOwner(Owner owner)
+        {
+            _context.Owners.Add(owner);
+            return Save();
+        }
+
         public Owner GetOwnerById(int ownerId)
         {
             return _context.Owners.Where(o => o.Id == ownerId).FirstOrDefault();
@@ -39,6 +47,13 @@ namespace ReviewApp_InWebApi.Repository
         public bool OwnerExists(int ownerId)
         {
             return _context.Owners.Any(o=>o.Id== ownerId);
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
+
         }
     }
 }

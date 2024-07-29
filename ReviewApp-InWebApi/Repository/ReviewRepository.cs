@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ReviewApp_InWebApi.Data;
 using ReviewApp_InWebApi.Interfaces;
 using ReviewApp_InWebApi.Model;
@@ -13,6 +14,13 @@ namespace ReviewApp_InWebApi.Repository
         {
             _context = context;
         }
+
+        public bool CreateReview(Review review)
+        {
+            _context.Reviews.Add(review);
+            return Save();
+        }
+
         public Review GetReviewById(int reviewId)
         {
             return _context.Reviews.Where(r=>r.Id==reviewId).FirstOrDefault();
@@ -31,6 +39,12 @@ namespace ReviewApp_InWebApi.Repository
         public bool ReviewExists(int reviewId)
         {
             return _context.Reviews.Any(r => r.Id == reviewId);
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
     }
 }

@@ -13,11 +13,13 @@ namespace ReviewApp_InWebApi.Controllers
     public class ReviewerController:Controller
     {
         private readonly IReviewerRepository _reviewerRepository;
+        private readonly IReviewRepository _reviewRepository;
         private readonly IMapper _mapper;
 
-        public ReviewerController(IReviewerRepository reviewerRepository,IMapper mapper)
+        public ReviewerController(IReviewerRepository reviewerRepository
+            ,IMapper mapper)
         {
-            _reviewerRepository = reviewerRepository;
+            _reviewerRepository = reviewerRepository;            
             _mapper = mapper;
         }
         [HttpGet]
@@ -60,6 +62,36 @@ namespace ReviewApp_InWebApi.Controllers
                 return BadRequest(ModelState);
 
             return Ok(review);
+        }
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateReviewer( [FromBody] ReviewerDto reviewerCreate)
+        {
+            if (reviewerCreate == null)
+            {
+                return BadRequest(ModelState);
+            }
+            var owner = _reviewerRepository.GetReviewers()
+                .Where(c => c.LastName.Trim().ToUpper() == reviewerCreate.LastName.TrimEnd().ToUpper())
+                .FirstOrDefault();
+            if (owner != null)
+            {
+                ModelState.AddModelError("", "Reviewer already exists");
+                return StatusCode(422, ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var reviewerMap= _mapper.Map<Reviewer>(reviewerCreate);
+            
+            if (!_reviewerRepository.CreateReviewer(reviewerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("Succesfuly created");
         }
     }
 }

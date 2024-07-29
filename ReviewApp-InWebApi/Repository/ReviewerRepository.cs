@@ -13,6 +13,13 @@ namespace ReviewApp_InWebApi.Repository
         {
             _context = context;
         }
+
+        public bool CreateReviewer(Reviewer reviewer)
+        {
+            _context.Reviewers.Add(reviewer);
+            return Save();
+        }
+
         public ICollection<Review> GetAllReviewsByReviewer(int reviewerId)
         {
             return _context.Reviews.Where(r=>r.Reviewer.Id==reviewerId).ToList();
@@ -31,6 +38,12 @@ namespace ReviewApp_InWebApi.Repository
         public bool ReviewerExists(int reviewerId)
         {
             return _context.Reviewers.Any(x => x.Id == reviewerId);
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
     }
 }
