@@ -20,6 +20,12 @@ namespace ReviewApp_InWebApi.Repository
             return Save();
         }
 
+        public bool DeleteReviewer(Reviewer reviewer)
+        {
+            _context.Remove(reviewer);
+            return Save();
+        }
+
         public ICollection<Review> GetAllReviewsByReviewer(int reviewerId)
         {
             return _context.Reviews.Where(r=>r.Reviewer.Id==reviewerId).ToList();
@@ -44,6 +50,12 @@ namespace ReviewApp_InWebApi.Repository
         {
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
+        }
+
+        public bool UpdateReviewer(Reviewer reviewer)
+        {
+            _context.Update(reviewer);
+            return Save();  
         }
     }
 }

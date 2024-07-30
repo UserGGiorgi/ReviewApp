@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ReviewApp_InWebApi.Dto;
 using ReviewApp_InWebApi.Interfaces;
 using ReviewApp_InWebApi.Model;
+using ReviewApp_InWebApi.Repository;
 
 namespace ReviewApp_InWebApi.Controllers
 {
@@ -99,8 +100,52 @@ namespace ReviewApp_InWebApi.Controllers
             }
             return Ok("Succesfuly created");
         }
+        [HttpPut("{ownerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateOwner(int ownerId, [FromBody] OwnerDto updatedOwner)
+        {
+            if (updatedOwner == null)
+                return BadRequest(ModelState);
 
+            if (ownerId != updatedOwner.Id)
+                return BadRequest(ModelState);
 
+            if (!_ownerRepository.OwnerExists(ownerId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var ownerMap = _mapper.Map<Owner>(updatedOwner);
+            if (!_ownerRepository.UpdateOwner(ownerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating owner");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+
+        }
+        [HttpDelete("{ownerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteOwner(int ownerId)
+        {
+            if (!_ownerRepository.OwnerExists(ownerId))
+            {
+                return BadRequest(ModelState);
+            }
+            var ownerDelete = _ownerRepository.GetOwnerById(ownerId);
+            if (!ModelState.IsValid)
+                return BadRequest(500);
+            if (!_ownerRepository.DeleteOwner(ownerDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting owner");
+            }
+            return NoContent();
+        }
     } 
     
 }

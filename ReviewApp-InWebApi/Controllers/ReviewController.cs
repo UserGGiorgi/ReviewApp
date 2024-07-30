@@ -101,5 +101,51 @@ namespace ReviewApp_InWebApi.Controllers
             }
             return Ok("Succesfuly created");
         }
+        [HttpPut("{reviewId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateReviewer(int reviewId, [FromBody] ReviewDto updatedReview)
+        {
+            if (updatedReview == null)
+                return BadRequest(ModelState);
+
+            if (reviewId != updatedReview.Id)
+                return BadRequest(ModelState);
+
+            if (!_reviewRepository.ReviewExists(reviewId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewMap = _mapper.Map<Review>(updatedReview);
+            if (!_reviewRepository.UpdateReview(reviewMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating review");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+
+        }
+        [HttpDelete("{ReviewId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteReview(int ReviewId)
+        {
+            if (!_reviewRepository.ReviewExists(ReviewId))
+            {
+                return BadRequest(ModelState);
+            }
+            var reviewDelete = _reviewRepository.GetReviewById(ReviewId);
+            if (!ModelState.IsValid)
+                return BadRequest(500);
+            if (!_reviewRepository.DeleteReview(reviewDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting review");
+            }
+            return NoContent();
+        }
     }
 }

@@ -93,5 +93,51 @@ namespace ReviewApp_InWebApi.Controllers
             }
             return Ok("Succesfuly created");
         }
+        [HttpPut("{reviewerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateReviewer(int reviewerId, [FromBody] ReviewerDto updatedReviewer)
+        {
+            if (updatedReviewer == null)
+                return BadRequest(ModelState);
+
+            if (reviewerId != updatedReviewer.Id)
+                return BadRequest(ModelState);
+
+            if (!_reviewerRepository.ReviewerExists(reviewerId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewerMap = _mapper.Map<Reviewer>(updatedReviewer);
+            if (!_reviewerRepository.UpdateReviewer(reviewerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating reviewer");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+
+        }
+        [HttpDelete("{ReviewerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteReviewer(int ReviewerId)
+        {
+            if (!_reviewerRepository.ReviewerExists(ReviewerId))
+            {
+                return BadRequest(ModelState);
+            }
+            var reviewerDelete = _reviewerRepository.GetReviewer(ReviewerId);
+            if (!ModelState.IsValid)
+                return BadRequest(500);
+            if (!_reviewerRepository.DeleteReviewer(reviewerDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting reviewer");
+            }
+            return NoContent();
+        }
     }
 }
