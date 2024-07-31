@@ -1,4 +1,5 @@
-﻿using ReviewApp_InWebApi.Model;
+﻿using ReviewApp_InWebApi.Dto;
+using ReviewApp_InWebApi.Model;
 
 namespace ReviewApp_InWebApi.Interfaces
 {
@@ -9,6 +10,7 @@ namespace ReviewApp_InWebApi.Interfaces
         Pokemon GetPokemon(string name);
         decimal GetPokemonRating(int pokeId);
         bool PokemonExists(int pokeId);
+        Pokemon GetPokemonTrimToUpper(PokemonDto pokemonCreate);
         bool CreatePokemon(int ownerId,int categoryId,Pokemon pokemon);
         bool UpdatePokemon(int ownerId,int categoryId,Pokemon pokemon);
         bool DeletePokemon(Pokemon pokemon);

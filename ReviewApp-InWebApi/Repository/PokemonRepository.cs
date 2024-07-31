@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReviewApp_InWebApi.Data;
+using ReviewApp_InWebApi.Dto;
 using ReviewApp_InWebApi.Interfaces;
 using ReviewApp_InWebApi.Model;
 
@@ -80,6 +81,11 @@ namespace ReviewApp_InWebApi.Repository
         {
             _context.Update(pokemon);
             return Save();
+        }
+        public Pokemon GetPokemonTrimToUpper(PokemonDto pokemonCreate)
+        {
+            return GetPokemons().Where(c => c.Name.Trim().ToUpper() == pokemonCreate.Name.TrimEnd().ToUpper())
+                .FirstOrDefault();
         }
     }
 }
